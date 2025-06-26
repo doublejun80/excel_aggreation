@@ -177,13 +177,21 @@ export default function QuoteUpload() {
                 </div>
               </div>
             </div>
-            <div className="p-0 overflow-auto" style={{ maxHeight: "calc(100vh - 400px)" }}>
-              <DataTable
-                data={uploadedFiles}
-                columns={fileColumns}
-                onRowSelect={(selectedRows) => console.log("Selected files:", selectedRows)}
-                onRowEdit={handleFileMapping}
-              />
+            <div className="p-4">
+              <div className="overflow-auto border border-gray-300" style={{ maxHeight: "calc(100vh - 500px)" }}>
+                {uploadedFiles.length > 0 ? (
+                  <DataTable
+                    data={uploadedFiles}
+                    columns={fileColumns}
+                    onRowSelect={(selectedRows) => console.log("Selected files:", selectedRows)}
+                    onRowEdit={handleFileMapping}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-64 text-gray-500">
+                    업로드된 파일이 없습니다
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

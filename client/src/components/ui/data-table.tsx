@@ -59,8 +59,8 @@ export function DataTable<T extends { id: number }>({
   const isIndeterminate = selectedRows.size > 0 && selectedRows.size < data.length;
 
   return (
-    <div className={cn("border border-gray-300", className)}>
-      <Table className="data-grid">
+    <div className={cn("w-full", className)}>
+      <Table className="data-grid w-full">
         <TableHeader className="bg-gray-100 sticky top-0">
           <TableRow className="border-b border-gray-300">
             {onRowSelect && (
@@ -93,59 +93,70 @@ export function DataTable<T extends { id: number }>({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((row) => (
-            <TableRow
-              key={row.id}
-              className={cn(
-                "border-b border-gray-200 hover:bg-gray-50",
-                selectedRows.has(row.id) && "bg-blue-50"
-              )}
-            >
-              {onRowSelect && (
-                <TableCell>
-                  <Checkbox
-                    checked={selectedRows.has(row.id)}
-                    onCheckedChange={(checked) => handleRowSelect(row.id, checked as boolean)}
-                    aria-label={`Select row ${row.id}`}
-                  />
-                </TableCell>
-              )}
-              {columns.map((column) => (
-                <TableCell
-                  key={String(column.key)}
-                  className={cn(
-                    column.align === "center" && "text-center",
-                    column.align === "right" && "text-right"
-                  )}
-                >
-                  {column.render
-                    ? column.render(row[column.key], row)
-                    : String(row[column.key] || "")}
-                </TableCell>
-              ))}
-              {(onRowEdit || onRowDelete) && (
-                <TableCell className="text-center">
-                  <div className="flex justify-center space-x-2">
-                    {onRowEdit && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onRowEdit(row)}
-                        className="text-xs text-gray-600 hover:text-black p-0 h-auto"
-                      >
-                        수정
-                      </Button>
+          {data.length === 0 ? (
+            <TableRow>
+              <TableCell 
+                colSpan={columns.length + (onRowSelect ? 1 : 0) + (onRowEdit || onRowDelete ? 1 : 0)}
+                className="text-center text-gray-500 py-8"
+              >
+                데이터가 없습니다
+              </TableCell>
+            </TableRow>
+          ) : (
+            data.map((row) => (
+              <TableRow
+                key={row.id}
+                className={cn(
+                  "border-b border-gray-200 hover:bg-gray-50",
+                  selectedRows.has(row.id) && "bg-blue-50"
+                )}
+              >
+                {onRowSelect && (
+                  <TableCell className="w-8">
+                    <Checkbox
+                      checked={selectedRows.has(row.id)}
+                      onCheckedChange={(checked) => handleRowSelect(row.id, checked as boolean)}
+                      aria-label={`Select row ${row.id}`}
+                    />
+                  </TableCell>
+                )}
+                {columns.map((column) => (
+                  <TableCell
+                    key={String(column.key)}
+                    className={cn(
+                      "px-4 py-2 text-sm",
+                      column.align === "center" && "text-center",
+                      column.align === "right" && "text-right"
                     )}
-                    {onRowDelete && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onRowDelete(row)}
-                        className="text-xs text-gray-600 hover:text-black p-0 h-auto"
-                      >
-                        삭제
-                      </Button>
-                    )}
+                  >
+                    {column.render
+                      ? column.render(row[column.key], row)
+                      : String(row[column.key] || "")}
+                  </TableCell>
+                ))}
+                {(onRowEdit || onRowDelete) && (
+                  <TableCell className="text-center">
+                    <div className="flex justify-center space-x-2">
+                      {onRowEdit && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onRowEdit(row)}
+                          className="text-xs text-gray-600 hover:text-black p-0 h-auto"
+                        >
+                          수정
+                        </Button>
+                      )}
+                      {onRowDelete && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onRowDelete(row)}
+                          className="text-xs text-red-600 hover:text-red-800 p-0 h-auto"
+                        >
+                          삭제
+                        </Button>
+                      )}
                   </div>
                 </TableCell>
               )}
