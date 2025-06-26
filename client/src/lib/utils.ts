@@ -33,12 +33,24 @@ export function getStatusColor(status: string): string {
   }
 }
 
-export function exportToExcel(data: any[], filename: string): void {
+export function exportToExcel(data: any[] | Record<string, any[]>, filename: string): void {
   try {
     import('xlsx').then((XLSX) => {
-      const ws = XLSX.utils.json_to_sheet(data);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "데이터");
+      
+      // 단일 배열인 경우
+      if (Array.isArray(data)) {
+        const ws = XLSX.utils.json_to_sheet(data);
+        XLSX.utils.book_append_sheet(wb, ws, "데이터");
+      } 
+      // 여러 시트가 있는 객체인 경우
+      else {
+        Object.entries(data).forEach(([sheetName, sheetData]) => {
+          const ws = XLSX.utils.json_to_sheet(sheetData);
+          XLSX.utils.book_append_sheet(wb, ws, sheetName);
+        });
+      }
+      
       XLSX.writeFile(wb, `${filename}.xlsx`);
     });
   } catch (error) {

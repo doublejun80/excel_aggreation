@@ -1,6 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { sqliteStorage } from "./sqlite-storage";  // SQLite 저장소 추가
+import { fileRouter } from "./file-routes";  // 파일 라우터 추가
+import { templateRouter } from "./template-routes";  // 템플릿 라우터 추가
+import { mappingRouter } from "./mapping-routes";  // 매핑 라우터 추가
+import { quoteRouter } from "./quote-routes";  // 견적 라우터 추가
+import { analyticsRouter } from "./analytics-routes";  // 분석 라우터 추가
 import { insertColumnSchema, insertTemplateSchema, insertQuotationSchema, insertUploadedFileSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -194,6 +200,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
-  return httpServer;
+  // 파일 처리 라우터 등록
+  app.use("/api/files", fileRouter);
+  
+  // 템플릿 라우터 등록
+  app.use("/api/templates", templateRouter);
+  
+  // 매핑 라우터 등록
+  app.use("/api/mapping", mappingRouter);
+  
+  // 견적 데이터 라우터 등록
+  app.use("/api/quotes", quoteRouter);
+  
+  // 데이터 분석 라우터 등록
+  app.use("/api/analytics", analyticsRouter);
+
+  return createServer(app);
 }
