@@ -34,11 +34,35 @@ export function getStatusColor(status: string): string {
 }
 
 export function exportToExcel(data: any[], filename: string): void {
-  // This would integrate with a library like xlsx
-  console.log("Exporting to Excel:", filename, data);
+  try {
+    import('xlsx').then((XLSX) => {
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "데이터");
+      XLSX.writeFile(wb, `${filename}.xlsx`);
+    });
+  } catch (error) {
+    console.error("Excel export error:", error);
+  }
 }
 
 export function copyToClipboard(data: any[]): void {
-  const text = data.map(row => Object.values(row).join('\t')).join('\n');
-  navigator.clipboard.writeText(text);
+  try {
+    if (data.length === 0) return;
+    
+    const headers = Object.keys(data[0]);
+    const headerRow = headers.join('\t');
+    const dataRows = data.map(row => 
+      headers.map(header => {
+        const value = row[header];
+        if (value === null || value === undefined) return '';
+        return String(value).replace(/\t/g, ' ').replace(/\n/g, ' ');
+      }).join('\t')
+    );
+    
+    const text = [headerRow, ...dataRows].join('\n');
+    navigator.clipboard.writeText(text);
+  } catch (error) {
+    console.error("Clipboard copy error:", error);
+  }
 }

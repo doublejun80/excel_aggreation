@@ -8,7 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable } from "@/components/ui/data-table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { apiRequest } from "@/lib/queryClient";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, exportToExcel, copyToClipboard } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 import type { Quotation } from "@shared/schema";
 
 export default function DataManagement() {
@@ -25,8 +26,10 @@ export default function DataManagement() {
     groupBy: false,
   });
   const [selectedQuotation, setSelectedQuotation] = useState<Quotation | null>(null);
+  const [selectedRows, setSelectedRows] = useState<Quotation[]>([]);
 
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data: quotations = [], isLoading } = useQuery<Quotation[]>({
     queryKey: ["/api/quotations"],
@@ -127,13 +130,37 @@ export default function DataManagement() {
   };
 
   const handleExportExcel = () => {
-    console.log("Exporting to Excel...");
-    // Implementation for Excel export
+    const dataToExport = selectedRows.length > 0 ? selectedRows : filteredQuotations;
+    if (dataToExport.length === 0) {
+      toast({
+        title: "내보낼 데이터 없음",
+        description: "내보낼 데이터가 없습니다.",
+        variant: "destructive",
+      });
+      return;
+    }
+    exportToExcel(dataToExport, `견적데이터_${new Date().toISOString().split('T')[0]}`);
+    toast({
+      title: "엑셀 내보내기 완료",
+      description: `${dataToExport.length}건의 데이터를 엑셀로 내보냈습니다.`,
+    });
   };
 
   const handleCopyToClipboard = () => {
-    console.log("Copying to clipboard...");
-    // Implementation for clipboard copy
+    const dataToExport = selectedRows.length > 0 ? selectedRows : filteredQuotations;
+    if (dataToExport.length === 0) {
+      toast({
+        title: "복사할 데이터 없음",
+        description: "복사할 데이터가 없습니다.",
+        variant: "destructive",
+      });
+      return;
+    }
+    copyToClipboard(dataToExport);
+    toast({
+      title: "클립보드 복사 완료",
+      description: `${dataToExport.length}건의 데이터를 클립보드에 복사했습니다.`,
+    });
   };
 
   if (isLoading) {
@@ -286,7 +313,7 @@ export default function DataManagement() {
           <DataTable
             data={filteredQuotations}
             columns={quotationColumns}
-            onRowSelect={(selectedRows) => console.log("Selected quotations:", selectedRows)}
+            onRowSelect={setSelectedRows}
             onRowEdit={handleQuotationEdit}
             onRowDelete={handleQuotationDelete}
           />
