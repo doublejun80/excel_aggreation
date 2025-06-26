@@ -54,13 +54,13 @@ export default function DataManagement() {
     )) {
       return false;
     }
-    if (filters.category && quotation.category !== filters.category) {
+    if (filters.category && filters.category !== "all" && quotation.category !== filters.category) {
       return false;
     }
-    if (filters.partner && quotation.partner !== filters.partner) {
+    if (filters.partner && filters.partner !== "all" && quotation.partner !== filters.partner) {
       return false;
     }
-    if (filters.vendor && quotation.vendor !== filters.vendor) {
+    if (filters.vendor && filters.vendor !== "all" && quotation.vendor !== filters.vendor) {
       return false;
     }
     return true;
@@ -198,7 +198,7 @@ export default function DataManagement() {
                   <SelectValue placeholder="전체" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">전체</SelectItem>
+                  <SelectItem value="all">전체</SelectItem>
                   <SelectItem value="SW군">SW군</SelectItem>
                   <SelectItem value="HW군">HW군</SelectItem>
                   <SelectItem value="서비스군">서비스군</SelectItem>
@@ -212,7 +212,7 @@ export default function DataManagement() {
                   <SelectValue placeholder="전체" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">전체</SelectItem>
+                  <SelectItem value="all">전체</SelectItem>
                   <SelectItem value="협력사A">협력사A</SelectItem>
                   <SelectItem value="협력사B">협력사B</SelectItem>
                 </SelectContent>
@@ -225,7 +225,7 @@ export default function DataManagement() {
                   <SelectValue placeholder="전체" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">전체</SelectItem>
+                  <SelectItem value="all">전체</SelectItem>
                   <SelectItem value="벤더A">벤더A</SelectItem>
                   <SelectItem value="벤더B">벤더B</SelectItem>
                 </SelectContent>

@@ -63,8 +63,9 @@ export class MemStorage implements IStorage {
     this.currentQuotationId = 1;
     this.currentFileId = 1;
 
-    // Initialize with default columns
+    // Initialize with default columns and sample data
     this.initializeDefaultColumns();
+    this.initializeSampleData();
   }
 
   private initializeDefaultColumns() {
@@ -80,10 +81,164 @@ export class MemStorage implements IStorage {
     defaultColumns.forEach(col => {
       const column: Column = {
         id: this.currentColumnId++,
-        ...col,
+        name: col.name,
+        dataType: col.dataType,
+        required: col.required,
+        defaultValue: col.defaultValue,
         createdAt: new Date(),
       };
       this.columns.set(column.id, column);
+    });
+  }
+
+  private initializeSampleData() {
+    // Add sample quotations
+    const sampleQuotations = [
+      {
+        quotationId: "Q2024-001",
+        solution: "ERP 시스템",
+        category: "SW군",
+        partner: "협력사A",
+        vendor: "벤더A",
+        mainProduct: "SAP ERP",
+        quantity: 10,
+        consumerPrice: "50000000",
+        contractAmount: "42000000",
+        savingsAmount: "8000000",
+        freeMaintenancePeriod: "12개월",
+        vendorContact: "김상무",
+        vendorEmail: "kim@vendor-a.com",
+        partnerContact: "이대리",
+        partnerEmail: "lee@partner-a.com",
+        specialNotes: "교육 포함",
+      },
+      {
+        quotationId: "Q2024-002",
+        solution: "서버 장비",
+        category: "HW군",
+        partner: "협력사B",
+        vendor: "벤더B",
+        mainProduct: "Dell PowerEdge",
+        quantity: 5,
+        consumerPrice: "30000000",
+        contractAmount: "27000000",
+        savingsAmount: "3000000",
+        freeMaintenancePeriod: "24개월",
+        vendorContact: "박과장",
+        vendorEmail: "park@vendor-b.com",
+        partnerContact: "최팀장",
+        partnerEmail: "choi@partner-b.com",
+        specialNotes: "온사이트 설치",
+      },
+      {
+        quotationId: "Q2024-003",
+        solution: "보안 컨설팅",
+        category: "서비스군",
+        partner: "협력사A",
+        vendor: "벤더A",
+        mainProduct: "보안 진단",
+        quantity: 1,
+        consumerPrice: "15000000",
+        contractAmount: "12000000",
+        savingsAmount: "3000000",
+        freeMaintenancePeriod: "6개월",
+        vendorContact: "김상무",
+        vendorEmail: "kim@vendor-a.com",
+        partnerContact: "이대리",
+        partnerEmail: "lee@partner-a.com",
+        specialNotes: "월 1회 점검",
+      },
+    ];
+
+    sampleQuotations.forEach(quotationData => {
+      const quotation: Quotation = {
+        id: this.currentQuotationId++,
+        quotationId: quotationData.quotationId,
+        solution: quotationData.solution,
+        category: quotationData.category,
+        partner: quotationData.partner,
+        vendor: quotationData.vendor,
+        mainProduct: quotationData.mainProduct,
+        quantity: quotationData.quantity,
+        consumerPrice: quotationData.consumerPrice,
+        contractAmount: quotationData.contractAmount,
+        savingsAmount: quotationData.savingsAmount,
+        freeMaintenancePeriod: quotationData.freeMaintenancePeriod,
+        vendorContact: quotationData.vendorContact,
+        vendorEmail: quotationData.vendorEmail,
+        partnerContact: quotationData.partnerContact,
+        partnerEmail: quotationData.partnerEmail,
+        specialNotes: quotationData.specialNotes,
+        version: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      this.quotations.set(quotation.id, quotation);
+    });
+
+    // Add sample templates
+    const sampleTemplates = [
+      {
+        name: "표준 ERP 템플릿",
+        mappingData: JSON.stringify({
+          solution: "A1",
+          partner: "B1",
+          vendor: "C1",
+          contractAmount: "D1"
+        }),
+      },
+      {
+        name: "하드웨어 견적 템플릿",
+        mappingData: JSON.stringify({
+          solution: "A2",
+          quantity: "B2",
+          consumerPrice: "C2",
+          contractAmount: "D2"
+        }),
+      },
+    ];
+
+    sampleTemplates.forEach(templateData => {
+      const template: Template = {
+        id: this.currentTemplateId++,
+        ...templateData,
+        createdAt: new Date(),
+      };
+      this.templates.set(template.id, template);
+    });
+
+    // Add sample uploaded files
+    const sampleFiles = [
+      {
+        filename: "ERP_견적서_2024.xlsx",
+        size: 245760,
+        status: "completed",
+        templateId: 1,
+      },
+      {
+        filename: "서버장비_견적_20241201.pdf",
+        size: 1048576,
+        status: "pending",
+        templateId: null,
+      },
+      {
+        filename: "보안컨설팅_제안서.xlsx",
+        size: 512000,
+        status: "failed",
+        templateId: null,
+      },
+    ];
+
+    sampleFiles.forEach(fileData => {
+      const file: UploadedFile = {
+        id: this.currentFileId++,
+        filename: fileData.filename,
+        size: fileData.size,
+        status: fileData.status,
+        templateId: fileData.templateId,
+        uploadedAt: new Date(),
+      };
+      this.uploadedFiles.set(file.id, file);
     });
   }
 
